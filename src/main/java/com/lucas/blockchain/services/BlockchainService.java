@@ -49,8 +49,13 @@ public class BlockchainService {
         newBlock.setHash(calculateHash(newBlock));
 
         blockchain.getChain().add(newBlock);
-        log.info("Block created with translations: {}", newBlock.getTransactions());
+        log.info("Block created with translations: {}. Its hash is: {}", newBlock.getTransactions(), newBlock.getHash());
         pendingTransaction.clear();
+    }
+
+    private void showAllBlocks(){
+
+
     }
 
     private String calculateHash(Block newBlock) {

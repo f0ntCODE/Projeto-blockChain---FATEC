@@ -19,6 +19,7 @@ import java.util.List;
 public class BlockchainService {
 
 
+    private List<Block> blocks = new ArrayList<>();
     private final Blockchain blockchain;
     private List<Transaction> pendingTransaction = new ArrayList<>();
     private final int blockSizeLimit = 3;
@@ -48,13 +49,40 @@ public class BlockchainService {
         newBlock.setTimestamp(System.currentTimeMillis());
         newBlock.setHash(calculateHash(newBlock));
 
+        //adicionar o novo bloco a uma arrayList
+        blocks.add(newBlock);
+
         blockchain.getChain().add(newBlock);
         log.info("Block created with translations: {}. Its hash is: {}", newBlock.getTransactions(), newBlock.getHash());
+        showBlocks(blocks);
         pendingTransaction.clear();
     }
 
-    private void showAllBlocks(){
+    public List<Block> getAllBlocks(){
+     return blocks;
+    }
 
+    /**
+     * EXPERIMENTAL: VISUALIZAÇÃO LEGÍVEL
+     * Este método visa permitir uma visualização mais legível dos blocos criados, porém, via terminal
+     *
+     * @param blockList A lista de blocos criados
+     */
+
+    private void showBlocks(List<Block> blockList){
+
+        System.out.println("LISTA DE BLOCOS: ");
+        for(Block b : blockList) {
+           // System.out.println("\nPARÂMETROS: " + b.toString() + "\n\n");
+
+            System.out.println("\n\t BLOCO: " +
+                    "\n|ÍNDICE: " + b.getIndex() +
+                    "\n|HASH ANTERIOR: " + b.getPreviousHash() +
+                    "\n|HASH GERADO: " + b.getHash() +
+                    "\n|TIMESTAMP: " + b.getTimestamp() +
+                    "\n|TRANSAÇÕES: " + b.getTransactions() +
+                    "\n");
+        }
 
     }
 

@@ -1,9 +1,13 @@
 package com.lucas.blockchain.controllers;
 
+import com.lucas.blockchain.models.Block;
 import com.lucas.blockchain.models.Transaction;
 import com.lucas.blockchain.services.BlockchainService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("blockchain")

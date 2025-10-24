@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br"
+xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de blocos</title>
+
+    <style>
+        #bloco{
+            border-style: solid;
+        }
+    </style>
+</head>
+<body>
+<h1>LISTA DE BLOCOS</h1>
+
+    <div th:each="blocks : ${blocks}">
+        <div id="bloco">
+            <label>ÍNDICE</label>
+            <p th:text="${blocks.index}">indice</p><br>
+
+            <label>HASH</label>
+            <p th:text="${blocks.hash}">hash</p><br>
+
+            <label>HASH ANTERIOR</label>
+            <p th:text="${blocks.previousHash}">hash anterior</p><br>
+
+
+            <label>TIMESTAMP</label>
+            <p th:text="${blocks.timestamp}">timestamp</p><br>
+
+            <label>TRANSAÇÃO</label>
+            <p th:text="${blocks.transactions}">transação</p><br>
+        </div>
+    </div>
+
+</body>
+</html>

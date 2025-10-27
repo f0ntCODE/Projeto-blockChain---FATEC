@@ -45,7 +45,7 @@ public class BlockchainService {
         Block newBlock = new Block();
         newBlock.setIndex(previusBlock.getIndex() + 1);
         newBlock.setPreviousHash(previusBlock.getHash());
-        newBlock.setTransactions(pendingTransaction);
+        newBlock.setTransactions(new ArrayList<>(pendingTransaction));
         newBlock.setTimestamp(System.currentTimeMillis());
         newBlock.setHash(calculateHash(newBlock));
 
@@ -53,7 +53,7 @@ public class BlockchainService {
         blocks.add(newBlock);
 
         blockchain.getChain().add(newBlock);
-        log.info("Block created with translations: {}. Its hash is: {}", newBlock.getTransactions(), newBlock.getHash());
+        log.info("Block created with transactions: {}. Its hash is: {}", newBlock.getTransactions(), newBlock.getHash());
         showBlocks(blocks);
         pendingTransaction.clear();
     }
@@ -63,7 +63,7 @@ public class BlockchainService {
     }
 
     /**
-     * EXPERIMENTAL: VISUALIZAÇÃO LEGÍVEL
+     * VISUALIZAÇÃO LEGÍVEL
      * Este método visa permitir uma visualização mais legível dos blocos criados, porém, via terminal
      *
      * @param blockList A lista de blocos criados
@@ -80,7 +80,7 @@ public class BlockchainService {
                     "\n|HASH ANTERIOR: " + b.getPreviousHash() +
                     "\n|HASH GERADO: " + b.getHash() +
                     "\n|TIMESTAMP: " + b.getTimestamp() +
-                    "\n|TRANSAÇÕES: " + b.getTransactions() +
+                    "\n|TRANSAÇÕES: " + b.getTransactions().toString() +
                     "\n");
         }
 

@@ -1,38 +1,314 @@
 <!DOCTYPE html>
-<html lang="pt-br"
-xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de blocos</title>
+    <title>Blockchain Visualizer</title>
 
     <style>
-        #bloco{
-            border-style: solid;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 50px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+
+        .blockchain-container {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .block {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 80px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .block-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .block-index {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .block-timestamp {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .hash-section {
+            margin: 20px 0;
+        }
+
+        .hash-label {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hash-value {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            word-break: break-all;
+            font-size: 0.85em;
+            color: #333;
+        }
+
+        .hash-previous {
+            border-left-color: #764ba2;
+        }
+
+        /* Linha de conexão entre blocos */
+        .connection-line {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 60px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            bottom: -70px;
+            z-index: 1;
+        }
+
+        .connection-line::before {
+            content: '🔗';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 5px;
+            border-radius: 50%;
+            font-size: 1.2em;
+        }
+
+        .connection-line::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #764ba2;
+        }
+
+        .transactions-section {
+            margin-top: 25px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .transactions-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bitcoin-icon {
+            font-size: 1.3em;
+            color: #f7931a;
+        }
+
+        .transaction-item {
+            background: white;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #f7931a;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .transaction-item:hover {
+            transform: translateX(5px);
+        }
+
+        .transaction-row {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+
+        .transaction-label {
+            font-weight: 600;
+            color: #555;
+            min-width: 120px;
+        }
+
+        .transaction-value {
+            color: #333;
+        }
+
+        .transaction-amount {
+            color: #f7931a;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .arrow {
+            margin: 0 10px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .no-transactions {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .block {
+                padding: 20px;
+            }
+
+            .block-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .transaction-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+                margin: 5px 0;
+            }
         }
     </style>
 </head>
 <body>
-<h1>LISTA DE BLOCOS</h1>
+<div class="container">
+    <h1>⛓️ BLOCKCHAIN VISUALIZER</h1>
 
-    <div th:each="blocks : ${blocks}">
-        <div id="bloco">
-            <label>ÍNDICE</label>
-            <p th:text="${blocks.index}">indice</p><br>
+    <div class="blockchain-container">
+        <div th:each="block, iterStat : ${blocks}">
+            <div class="block">
+                <div class="block-header">
+                    <div class="block-index">
+                        📦 BLOCO #<span th:text="${block.index}">0</span>
+                    </div>
+                    <div class="block-timestamp">
+                        ⏰ <span th:text="${#dates.format(new java.util.Date(block.timestamp), 'dd/MM/yyyy HH:mm:ss')}">timestamp</span>
+                    </div>
+                </div>
 
-            <label>HASH</label>
-            <p th:text="${blocks.hash}">hash</p><br>
+                <div class="hash-section">
+                    <div class="hash-label">🔐 Hash do Bloco</div>
+                    <div class="hash-value" th:text="${block.hash}">hash</div>
+                </div>
 
-            <label>HASH ANTERIOR</label>
-            <p th:text="${blocks.previousHash}">hash anterior</p><br>
+                <div class="hash-section">
+                    <div class="hash-label">🔗 Hash do Bloco Anterior</div>
+                    <div class="hash-value hash-previous" th:text="${block.previousHash}">hash anterior</div>
+                </div>
 
+                <div class="transactions-section">
+                    <div class="transactions-title">
+                        <span class="bitcoin-icon">₿</span>
+                        TRANSAÇÕES
+                    </div>
 
-            <label>TIMESTAMP</label>
-            <p th:text="${blocks.timestamp}">timestamp</p><br>
+                    <div th:if="${block.transactions != null and not #lists.isEmpty(block.transactions)}">
+                        <div class="transaction-item" th:each="tr, trStat : ${block.transactions}">
+                            <div style="color: #999; font-size: 0.85em; margin-bottom: 8px;">
+                                Transação #<span th:text="${trStat.count}">1</span>
+                            </div>
+                            <div class="transaction-row">
+                                <span class="transaction-label">👤 Remetente:</span>
+                                <span class="transaction-value" th:text="${tr.sender}">sender</span>
+                            </div>
+                            <div class="transaction-row">
+                                <span class="arrow">➡️</span>
+                            </div>
+                            <div class="transaction-row">
+                                <span class="transaction-label">👤 Destinatário:</span>
+                                <span class="transaction-value" th:text="${tr.recipient}">recipient</span>
+                            </div>
+                            <div class="transaction-row">
+                                <span class="transaction-label">₿ Valor:</span>
+                                <span class="transaction-amount" th:text="${#numbers.formatDecimal(tr.amount, 1, 8)} + ' BTC'">amount</span>
+                            </div>
+                        </div>
+                    </div>
 
-            <label>TRANSAÇÃO</label>
-            <p th:text="${blocks.transactions}">transação</p><br>
+                    <div th:unless="${block.transactions != null and not #lists.isEmpty(block.transactions)}">
+                        <div class="no-transactions">Nenhuma transação neste bloco</div>
+                    </div>
+                </div>
+
+                <!-- Linha de conexão (não aparece no último bloco) -->
+                <div class="connection-line" th:unless="${iterStat.last}"></div>
+            </div>
         </div>
     </div>
 
+    <div th:if="${blocks == null or #lists.isEmpty(blocks)}" style="text-align: center; color: white; font-size: 1.5em; margin-top: 50px;">
+        <p>⚠️ Nenhum bloco foi criado ainda na blockchain.</p>
+    </div>
+</div>
 </body>
 </html>
